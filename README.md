@@ -1,5 +1,11 @@
 # Agenda+ — Sistema de Agenda de Serviços (Aula 7)
 
+## Alunos: 
+
+```bash
+Felipe Sperli Neto, Pedro Henrique Bassi Parma
+```
+
 Aplicação web para controle de serviços e agendamentos, feita com **Spring Boot (MVC) + Spring Data JPA + H2 + Thymeleaf + Bootstrap**, seguindo o diagrama de classes e as telas do protótipo.
 
 ## Como executar
