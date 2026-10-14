@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+<body>
+<div class="login-shell">
+
+    <section class="login-hero">
+        <div>
+            <span class="brand"><span class="brand-dot"></span>Agenda+</span>
+            <h1>Seu dia organizado, serviço por serviço.</h1>
+        </div>
+        <p class="tagline">Gerencie clientes, horários e serviços em uma única agenda simples.</p>
+    </section>
+
+    <main class="login-side">
+        <div class="login-card">
+            <h2>Acesse sua conta</h2>
+            <p class="sub">Use seu usuário e senha para entrar.</p>
+
+            <div class="flash flash-erro" th:if="${param.erro}" role="alert">
+                <i class="bi bi-exclamation-circle"></i><span>Usuário ou senha inválidos.</span>
+            </div>
+            <div class="flash flash-ok" th:if="${param.saiu}" role="status">
+                <i class="bi bi-check-circle"></i><span>Você saiu da sua conta.</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Usuário</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario"
+                           placeholder="Digite seu usuário" autocomplete="username" required autofocus>
+                </div>
+                <div class="mb-2">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha"
+                           placeholder="Digite sua senha" autocomplete="current-password" required>
+                </div>
+
+                <div class="opts">
+                    <div class="form-check m-0">
+                        <input class="form-check-input sq" type="checkbox" id="manterConectado" name="manterConectado">
+                        <label class="form-check-label" for="manterConectado">Manter conectado</label>
+                    </div>
+                    <a href="#esqueci" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                       aria-controls="esqueci">Esqueci minha senha</a>
+                </div>
+                <div class="collapse" id="esqueci">
+                    <div class="flash flash-ok" style="background:#f5f5f5;color:#444;border-color:#e6e6e6">
+                        <i class="bi bi-info-circle"></i>
+                        <span>Por segurança, as senhas são guardadas criptografadas. Peça ao administrador para
+                            definir uma nova senha para você.</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-ap w-100">Entrar</button>
+            </form>
+
+            <p class="help">Problemas para acessar? Fale com o administrador.</p>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

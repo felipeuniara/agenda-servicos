@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${endereco.id == null ? 'Novo endereço' : 'Editar endereço'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('enderecos')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <div class="crumb"><a th:href="@{/enderecos}">Endereços</a> / <span
+                        th:text="${endereco.id == null} ? 'Novo endereço' : 'Editar endereço'">Novo endereço</span></div>
+                <h1 th:text="${endereco.id == null} ? 'Novo endereço' : 'Editar endereço'">Novo endereço</h1>
+                <div class="sub" th:if="${dono != null}" th:text="${'Endereço do cliente ' + dono.nome}">Endereço do cliente</div>
+                <div class="sub" th:if="${dono == null}">Logradouro, cidade e UF são obrigatórios.</div>
+            </div>
+        </div>
+
+        <form class="form-card" th:action="@{/enderecos/salvar}" th:object="${endereco}" method="post" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <h2>Dados do endereço</h2>
+
+            <div class="flash flash-erro" th:if="${#fields.hasGlobalErrors()}" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                <div><div th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</div></div>
+            </div>
+
+            <th:block th:replace="~{fragments/endereco :: campos('')}"></th:block>
+
+            <div class="row g-3 mt-1" th:if="${endereco.id == null}">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="clienteId">Vincular ao cliente (opcional)</label>
+                    <select class="form-select" id="clienteId" name="clienteId">
+                        <option value="">Nenhum</option>
+                        <option th:each="c : ${clientesSemEndereco}" th:value="${c.id}" th:text="${c.nome}"
+                                th:selected="${clienteId != null and clienteId == c.id}">Cliente</option>
+                    </select>
+                    <div class="form-text">Apenas clientes que ainda não têm endereço.</div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a class="btn btn-ap-light" th:href="@{/enderecos}">Cancelar</a>
+                <button type="submit" class="btn btn-ap">Salvar endereço</button>
+            </div>
+        </form>
+    </main>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

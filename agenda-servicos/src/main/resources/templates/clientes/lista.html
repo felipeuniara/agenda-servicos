@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Clientes')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('clientes')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Clientes</h1>
+                <div class="sub">Cadastros e contatos disponíveis para agendamento.</div>
+            </div>
+            <a class="btn btn-ap" th:href="@{/clientes/novo}">Novo cliente</a>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <form class="toolbar" th:action="@{/clientes}" method="get" role="search">
+            <input type="hidden" name="ordem" th:value="${ordem}">
+            <div class="search">
+                <input type="search" class="form-control" name="q" th:value="${q}"
+                       placeholder="Buscar por nome, telefone ou e-mail" aria-label="Buscar clientes">
+            </div>
+            <select class="form-select select-pill" name="filtro" data-autosubmit aria-label="Filtrar clientes">
+                <option value="todos" th:selected="${filtro == 'todos'}">Todos os clientes</option>
+                <option value="completo" th:selected="${filtro == 'completo'}">Com endereço completo</option>
+                <option value="incompleto" th:selected="${filtro == 'incompleto'}">Endereço incompleto</option>
+            </select>
+        </form>
+
+        <div class="section-head">
+            <h2 th:text="${#strings.isEmpty(q) and filtro == 'todos'} ? 'Clientes recentes' : 'Resultado da busca'">Clientes recentes</h2>
+            <form th:action="@{/clientes}" method="get">
+                <input type="hidden" name="q" th:value="${q}">
+                <input type="hidden" name="filtro" th:value="${filtro}">
+                <select class="form-select select-plain" name="ordem" data-autosubmit aria-label="Ordenar">
+                    <option value="recentes" th:selected="${ordem == 'recentes'}">Mais recentes</option>
+                    <option value="nome" th:selected="${ordem == 'nome'}">Nome (A–Z)</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="item-list" th:unless="${clientes.isEmpty()}">
+            <div class="item-card" th:each="c : ${clientes}">
+                <div>
+                    <h3 class="item-title" th:text="${c.nome}">Ana Martins</h3>
+                    <div class="item-meta">
+                        <span th:text="${c.telefone}">(11) 99912-3401</span><span class="dot-sep"></span><span
+                            th:text="${c.email}">ana.martins@email.com</span>
+                        <br>
+                        <span th:if="${c.endereco != null}" th:text="${c.endereco.resumo}">Rua das Flores, 120 — São Paulo/SP</span>
+                        <span class="badge-soft ms-0" th:if="${c.endereco == null}">Sem endereço</span>
+                        <span class="badge-soft" th:if="${c.endereco != null and !c.endereco.completo}">Endereço incompleto</span>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/clientes/{id}/editar(id=${c.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li><a class="dropdown-item small" th:href="@{/agenda(clienteId=${c.id})}">
+                            <i class="bi bi-calendar4-week me-2"></i>Ver agendamentos</a></li>
+                        <li>
+                            <form th:action="@{/clientes/{id}/excluir(id=${c.id})}" method="post"
+                                  th:attr="data-confirm=${'Excluir o cliente ' + c.nome + '?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty" th:if="${clientes.isEmpty()}">
+            <i class="bi bi-people d-block fs-4 mb-2"></i>
+            Nenhum cliente encontrado.
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Usuários')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('usuarios')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Usuários</h1>
+                <div class="sub">Pessoas com acesso ao sistema e profissionais da agenda.</div>
+            </div>
+            <a class="btn btn-ap" th:href="@{/usuarios/novo}">Novo usuário</a>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <div class="section-head">
+            <h2>Todos os usuários</h2>
+            <a class="period-links text-decoration-none" th:href="@{/tipos-acesso}" style="color:var(--ap-muted)">Gerenciar tipos de acesso</a>
+        </div>
+
+        <div class="item-list">
+            <div class="item-card" th:each="u : ${usuarios}">
+                <div>
+                    <h3 class="item-title">
+                        <span th:text="${u.nomeExibicao}">Marina</span>
+                        <span class="badge-soft" th:if="${usuarioLogado != null and usuarioLogado.id == u.id}">você</span>
+                    </h3>
+                    <div class="item-meta">
+                        <span th:text="${'Login: ' + u.usuario}">Login: marina</span><span class="dot-sep"></span><span
+                            th:text="${u.tipoAcesso.descricao}">Administrador</span><span class="dot-sep"></span><span
+                            th:text="${'Cadastrado em ' + @fmt.data(u.dtCadastro)}">Cadastrado em 14/10/2026</span>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/usuarios/{id}/editar(id=${u.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li>
+                            <form th:action="@{/usuarios/{id}/excluir(id=${u.id})}" method="post"
+                                  th:attr="data-confirm=${'Excluir o usuário ' + u.usuario + '?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

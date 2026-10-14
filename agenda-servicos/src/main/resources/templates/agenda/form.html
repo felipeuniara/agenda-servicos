@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${agendamento.id == null ? 'Novo agendamento' : 'Editar agendamento'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('agenda')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <div class="crumb"><a th:href="@{/agenda}">Agenda</a> / <span
+                        th:text="${agendamento.id == null} ? 'Novo agendamento' : 'Editar agendamento'">Novo agendamento</span></div>
+                <h1 th:text="${agendamento.id == null} ? 'Novo agendamento' : 'Editar agendamento'">Novo agendamento</h1>
+                <div class="sub">Preencha os dados abaixo para reservar um horário.</div>
+            </div>
+        </div>
+
+        <form class="form-card" th:action="@{/agenda/salvar}" th:object="${agendamento}" method="post" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <h2>Dados do atendimento</h2>
+
+            <div class="flash flash-erro" th:if="${#fields.hasGlobalErrors()}" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                <div><div th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</div></div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="clienteId">Cliente</label>
+                    <select class="form-select" th:field="*{clienteId}" th:errorclass="is-invalid">
+                        <option value="">Selecione um cliente</option>
+                        <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome}">Ana Martins</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('clienteId')}" th:errors="*{clienteId}"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="servicoId">Serviço</label>
+                    <select class="form-select" th:field="*{servicoId}" th:errorclass="is-invalid">
+                        <option value="">Selecione um serviço</option>
+                        <option th:each="s : ${servicos}" th:value="${s.id}" th:attr="data-valor=${@fmt.numero(s.valor)}"
+                                th:text="${s.nome + ' — ' + @fmt.moeda(s.valor)}">Corte feminino</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('servicoId')}" th:errors="*{servicoId}"></div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="data">Data</label>
+                    <input type="date" class="form-control" th:field="*{data}" th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('data')}" th:errors="*{data}"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="horario">Horário</label>
+                    <select class="form-select" id="horario" name="horario"
+                            th:classappend="${#fields.hasErrors('horario')} ? 'is-invalid'">
+                        <option value="">Selecione um horário</option>
+                        <option th:each="h : ${horarios}"
+                                th:with="txt=${#temporals.format(h, 'HH:mm')}"
+                                th:value="${txt}" th:text="${txt}"
+                                th:selected="${agendamento.horario != null and agendamento.horario == h}">09:00</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('horario')}" th:errors="*{horario}"></div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="usuarioId">Profissional</label>
+                    <select class="form-select" th:field="*{usuarioId}" th:errorclass="is-invalid">
+                        <option value="">Selecione o responsável</option>
+                        <option th:each="u : ${profissionais}" th:value="${u.id}" th:text="${u.nomeExibicao}">Marina</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('usuarioId')}" th:errors="*{usuarioId}"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="valor">Valor</label>
+                    <input type="text" class="form-control" id="valor" placeholder="R$ 0,00" readonly tabindex="-1"
+                           aria-describedby="valorAjuda">
+                    <div id="valorAjuda" class="form-text">Definido pelo serviço selecionado.</div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label" for="descricao">Observações</label>
+                    <textarea class="form-control" rows="3" th:field="*{descricao}" th:errorclass="is-invalid"
+                              placeholder="Inclua detalhes importantes sobre o atendimento..."></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
+                </div>
+            </div>
+
+            <div class="summary-bar">
+                <span id="resumo">Selecione data, horário e profissional</span>
+                <strong>Total: <span id="total">R$ 0,00</span></strong>
+            </div>
+
+            <div class="form-actions">
+                <a class="btn btn-ap-light" th:href="@{/agenda}">Cancelar</a>
+                <button type="submit" class="btn btn-ap">Salvar agendamento</button>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' · Agenda+'">Agenda+</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+          th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="stylesheet" href="/css/app.css" th:href="@{/css/app.css}">
+</head>
+
+<body>
+
+<aside th:fragment="sidebar(ativo)" class="sidebar offcanvas-md offcanvas-start" tabindex="-1"
+       id="menuLateral" aria-label="Menu principal">
+    <div class="offcanvas-header d-md-none justify-content-end pb-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                data-bs-target="#menuLateral" aria-label="Fechar menu"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="text-center">
+            <a class="brand" href="/agenda" th:href="@{/agenda}"><span class="brand-dot"></span>Agenda+</a>
+        </div>
+
+        <nav class="side-nav">
+            <a href="/agenda" th:href="@{/agenda}" th:classappend="${ativo == 'agenda'} ? 'active'">Agenda</a>
+            <a href="/clientes" th:href="@{/clientes}" th:classappend="${ativo == 'clientes'} ? 'active'">Clientes</a>
+            <a href="/servicos" th:href="@{/servicos}" th:classappend="${ativo == 'servicos'} ? 'active'">Serviços</a>
+            <a href="/usuarios" th:href="@{/usuarios}" th:classappend="${ativo == 'usuarios'} ? 'active'">Usuários</a>
+
+            <div class="nav-group">Cadastros</div>
+            <a href="/enderecos" th:href="@{/enderecos}" th:classappend="${ativo == 'enderecos'} ? 'active'">Endereços</a>
+            <a href="/tipos-acesso" th:href="@{/tipos-acesso}"
+               th:classappend="${ativo == 'tipos'} ? 'active'">Tipos de acesso</a>
+            <a href="/h2-console" th:href="@{/h2-console}" target="_blank" rel="noopener">Banco H2 <i class="bi bi-box-arrow-up-right small"></i></a>
+        </nav>
+
+        <div class="side-footer">
+            <div class="who" th:if="${usuarioLogado != null}"
+                 th:text="${usuarioLogado.nomeExibicao + ' • ' + usuarioLogado.tipoAcesso.descricao}">Marina • Administrador</div>
+            <form action="/logout" th:action="@{/logout}" method="post">
+                <button type="submit" class="logout">Sair</button>
+            </form>
+        </div>
+    </div>
+</aside>
+
+<div th:fragment="mobilebar" class="mobile-bar d-md-none">
+    <a class="brand brand-dark" href="/agenda" th:href="@{/agenda}"><span class="brand-dot"></span>Agenda+</a>
+    <button class="btn-ap-outline" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
+            aria-controls="menuLateral" aria-label="Abrir menu"><i class="bi bi-list"></i></button>
+</div>
+
+<th:block th:fragment="alerts">
+    <div class="flash flash-ok" th:if="${sucesso}" role="status">
+        <i class="bi bi-check-circle"></i><span th:text="${sucesso}">Registro salvo com sucesso.</span>
+    </div>
+    <div class="flash flash-erro" th:if="${erro}" role="alert">
+        <i class="bi bi-exclamation-circle"></i><span th:text="${erro}">Mensagem de erro.</span>
+    </div>
+</th:block>
+
+<th:block th:fragment="scripts">
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+            th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <script src="/js/app.js" th:src="@{/js/app.js}"></script>
+</th:block>
+
+</body>
+</html>

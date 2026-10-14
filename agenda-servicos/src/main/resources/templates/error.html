@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Erro')}"></head>
+<body>
+<div class="error-wrap">
+    <div class="error-card">
+        <div class="code" th:text="${status}">404</div>
+        <h1 class="h5 fw-semibold" th:text="${status == 404} ? 'Página não encontrada' : 'Algo deu errado'">Página não encontrada</h1>
+        <p class="text-secondary small">Volte para a agenda e tente novamente.</p>
+        <a class="btn btn-ap" th:href="@{/agenda}">Voltar para a agenda</a>
+    </div>
+</div>
+</body>
+</html>

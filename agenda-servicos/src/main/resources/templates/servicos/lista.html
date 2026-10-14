@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Serviços')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('servicos')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Serviços</h1>
+                <div class="sub">Catálogo de serviços e valores usados nos agendamentos.</div>
+            </div>
+            <a class="btn btn-ap" th:href="@{/servicos/novo}">Novo serviço</a>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <div class="section-head"><h2>Todos os serviços</h2></div>
+
+        <div class="item-list" th:unless="${servicos.isEmpty()}">
+            <div class="item-card" th:each="s : ${servicos}" th:with="qtd=${contagem.get(s.id)}">
+                <div>
+                    <h3 class="item-title" th:text="${s.nome}">Corte feminino</h3>
+                    <div class="item-meta">
+                        <span th:text="${@fmt.moeda(s.valor)}">R$ 120</span><span class="dot-sep"></span><span
+                            th:text="${qtd == 1 ? '1 agendamento' : qtd + ' agendamentos'}">2 agendamentos</span>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/servicos/{id}/editar(id=${s.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li><a class="dropdown-item small" th:href="@{/agenda(servicoId=${s.id})}">
+                            <i class="bi bi-calendar4-week me-2"></i>Ver agendamentos</a></li>
+                        <li>
+                            <form th:action="@{/servicos/{id}/excluir(id=${s.id})}" method="post"
+                                  th:attr="data-confirm=${'Excluir o serviço ' + s.nome + '?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty" th:if="${servicos.isEmpty()}">
+            <i class="bi bi-scissors d-block fs-4 mb-2"></i>
+            Nenhum serviço cadastrado.
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

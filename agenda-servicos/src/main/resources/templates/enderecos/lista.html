@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Endereços')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('enderecos')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Endereços</h1>
+                <div class="sub">Endereços cadastrados e o cliente a que pertencem.</div>
+            </div>
+            <a class="btn btn-ap" th:href="@{/enderecos/novo}">Novo endereço</a>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <div class="item-list" th:unless="${enderecos.isEmpty()}">
+            <div class="item-card" th:each="e : ${enderecos}" th:with="dono=${donos.get(e.id)}">
+                <div>
+                    <h3 class="item-title" th:text="${#strings.isEmpty(e.resumo)} ? 'Endereço sem logradouro' : ${e.resumo}">Rua das Flores, 120 — São Paulo/SP</h3>
+                    <div class="item-meta">
+                        <span th:text="${e.cep != null} ? ${'CEP ' + e.cep} : 'CEP não informado'">CEP 01310-100</span><span
+                            class="dot-sep"></span><span th:text="${e.estado != null} ? ${e.estado} : 'Estado não informado'">São Paulo</span><span
+                            class="dot-sep"></span><span th:text="${dono != null} ? ${'Cliente: ' + dono.nome} : 'Sem cliente vinculado'">Cliente: Ana Martins</span>
+                        <span class="badge-soft" th:unless="${e.completo}">Incompleto</span>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/enderecos/{id}/editar(id=${e.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li th:if="${dono != null}"><a class="dropdown-item small" th:href="@{/clientes/{id}/editar(id=${dono.id})}">
+                            <i class="bi bi-person me-2"></i>Abrir cliente</a></li>
+                        <li>
+                            <form th:action="@{/enderecos/{id}/excluir(id=${e.id})}" method="post"
+                                  th:attr="data-confirm=${dono != null ? 'Este endereço será removido do cliente ' + dono.nome + '. Continuar?' : 'Excluir este endereço?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty" th:if="${enderecos.isEmpty()}">
+            <i class="bi bi-geo-alt d-block fs-4 mb-2"></i>
+            Nenhum endereço cadastrado.
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

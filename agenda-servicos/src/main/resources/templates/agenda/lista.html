@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Agenda')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('agenda')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Agenda</h1>
+                <div class="sub" th:text="${@fmt.extenso(hoje)}">Quarta-feira, 7 de outubro</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-ap-outline" type="button" data-bs-toggle="collapse" data-bs-target="#pesquisa"
+                        th:attr="aria-expanded=${filtro.ativo}" aria-controls="pesquisa">
+                    <i class="bi bi-search me-1"></i>Pesquisar
+                </button>
+                <a class="btn btn-ap" href="/agenda/novo" th:href="@{/agenda/novo}">Novo agendamento</a>
+            </div>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <div class="collapse" th:classappend="${filtro.ativo} ? 'show'" id="pesquisa">
+            <form class="search-panel" th:action="@{/agenda}" method="get" th:object="${filtro}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-md-3">
+                        <label class="form-label" for="fCliente">Cliente</label>
+                        <select class="form-select" id="fCliente" th:field="*{clienteId}">
+                            <option value="">Todos</option>
+                            <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome}">Ana Martins</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label" for="fServico">Serviço</label>
+                        <select class="form-select" id="fServico" th:field="*{servicoId}">
+                            <option value="">Todos</option>
+                            <option th:each="s : ${servicos}" th:value="${s.id}" th:text="${s.nome}">Corte feminino</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label" for="fDe">De</label>
+                        <input type="date" class="form-control" id="fDe" th:field="*{de}">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label" for="fAte">Até</label>
+                        <input type="date" class="form-control" id="fAte" th:field="*{ate}">
+                    </div>
+                    <div class="col-12 col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-ap flex-fill">Buscar</button>
+                        <a class="btn btn-ap-outline" th:href="@{/agenda}" title="Limpar filtros">Limpar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="section-head">
+            <h2 th:text="${filtro.ativo} ? 'Resultado da pesquisa' : 'Próximos horários'">Próximos horários</h2>
+            <div class="period-links" th:unless="${filtro.ativo}">
+                <a th:href="@{/agenda(periodo='hoje')}" th:classappend="${periodo == 'hoje'} ? 'active'">Hoje</a><span class="sep">·</span>
+                <a th:href="@{/agenda(periodo='semana')}" th:classappend="${periodo == 'semana'} ? 'active'">Semana</a><span class="sep">·</span>
+                <a th:href="@{/agenda(periodo='mes')}" th:classappend="${periodo == 'mes'} ? 'active'">Mês</a>
+            </div>
+        </div>
+
+        <div class="item-list" th:unless="${agendamentos.isEmpty()}">
+            <div class="item-card tall" th:each="a : ${agendamentos}" th:classappend="${a.passado} ? 'past'">
+                <div>
+                    <h3 class="item-title">
+                        <span class="day-label" th:if="${mostrarDia}" th:text="${@fmt.diaCurto(a.data)}">Qui, 15/10</span>
+                        <span th:text="${@fmt.hora(a.data)}">09:00</span>
+                        <span class="dot-sep"></span><span th:text="${a.servico.nome}">Corte feminino</span>
+                        <span class="badge-soft" th:if="${a.passado}">Realizado</span>
+                    </h3>
+                    <div class="item-meta">
+                        <span th:text="${a.cliente.nome}">Ana Martins</span><span class="dot-sep"></span><span
+                            th:text="${'Profissional: ' + a.usuario.nomeExibicao}">Profissional: Marina</span><span
+                            class="dot-sep"></span><span th:text="${@fmt.moeda(a.servico.valor)}">R$ 120</span>
+                    </div>
+                    <div class="item-note" th:if="${a.descricao}" th:text="${a.descricao}">Observação</div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/agenda/{id}/editar(id=${a.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li>
+                            <form th:action="@{/agenda/{id}/excluir(id=${a.id})}" method="post"
+                                  th:attr="data-confirm=${'Excluir o agendamento de ' + a.cliente.nome + ' (' + @fmt.data(a.data) + ' às ' + @fmt.hora(a.data) + ')?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty" th:if="${agendamentos.isEmpty()}">
+            <i class="bi bi-calendar4 d-block fs-4 mb-2"></i>
+            <span th:text="${filtro.ativo} ? 'Nenhum agendamento encontrado para os filtros informados.' : 'Nenhum agendamento ' + ${rotulo} + '.'">Nenhum agendamento hoje.</span>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

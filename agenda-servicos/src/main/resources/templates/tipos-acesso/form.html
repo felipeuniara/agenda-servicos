@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${tipoAcesso.id == null ? 'Novo tipo de acesso' : 'Editar tipo de acesso'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('tipos')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <div class="crumb"><a th:href="@{/tipos-acesso}">Tipos de acesso</a> / <span
+                        th:text="${tipoAcesso.id == null} ? 'Novo' : 'Editar'">Novo</span></div>
+                <h1 th:text="${tipoAcesso.id == null} ? 'Novo tipo de acesso' : 'Editar tipo de acesso'">Novo tipo de acesso</h1>
+                <div class="sub">Perfil atribuído aos usuários do sistema.</div>
+            </div>
+        </div>
+
+        <form class="form-card" style="max-width:520px" th:action="@{/tipos-acesso/salvar}" th:object="${tipoAcesso}"
+              method="post" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <h2>Dados do tipo de acesso</h2>
+
+            <div class="flash flash-erro" th:if="${#fields.hasGlobalErrors()}" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                <div><div th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</div></div>
+            </div>
+
+            <label class="form-label" for="descricao">Descrição</label>
+            <input type="text" class="form-control" th:field="*{descricao}" th:errorclass="is-invalid"
+                   placeholder="Ex.: Profissional" maxlength="60">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
+
+            <div class="form-actions">
+                <a class="btn btn-ap-light" th:href="@{/tipos-acesso}">Cancelar</a>
+                <button type="submit" class="btn btn-ap">Salvar</button>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

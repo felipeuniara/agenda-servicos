@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tipos de acesso')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('tipos')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <h1>Tipos de acesso</h1>
+                <div class="sub">Perfis atribuídos aos usuários do sistema.</div>
+            </div>
+            <a class="btn btn-ap" th:href="@{/tipos-acesso/novo}">Novo tipo de acesso</a>
+        </div>
+
+        <th:block th:replace="~{fragments/layout :: alerts}"></th:block>
+
+        <div class="item-list" th:unless="${tipos.isEmpty()}">
+            <div class="item-card" th:each="t : ${tipos}" th:with="qtd=${contagem.get(t.id)}">
+                <div>
+                    <h3 class="item-title" th:text="${t.descricao}">Administrador</h3>
+                    <div class="item-meta" th:text="${qtd == 1 ? '1 usuário' : qtd + ' usuários'}">1 usuário</div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            aria-label="Ações"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item small" th:href="@{/tipos-acesso/{id}/editar(id=${t.id})}">
+                            <i class="bi bi-pencil me-2"></i>Editar</a></li>
+                        <li>
+                            <form th:action="@{/tipos-acesso/{id}/excluir(id=${t.id})}" method="post"
+                                  th:attr="data-confirm=${'Excluir o tipo de acesso ' + t.descricao + '?'}">
+                                <button type="submit" class="dropdown-item small text-danger">
+                                    <i class="bi bi-trash me-2"></i>Excluir</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty" th:if="${tipos.isEmpty()}">Nenhum tipo de acesso cadastrado.</div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

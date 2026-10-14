@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="campos(p)">
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <label class="form-label" th:for="${p + 'cep'}">CEP</label>
+            <input type="text" class="form-control" th:field="*{__${p}__cep}" th:errorclass="is-invalid"
+                   placeholder="00000-000" data-mask="cep" inputmode="numeric" maxlength="9">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__cep')}" th:errors="*{__${p}__cep}"></div>
+        </div>
+        <div class="col-12 col-md-8">
+            <label class="form-label" th:for="${p + 'logradouro'}">Logradouro</label>
+            <input type="text" class="form-control" th:field="*{__${p}__logradouro}" th:errorclass="is-invalid"
+                   placeholder="Rua, avenida..." maxlength="150">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__logradouro')}" th:errors="*{__${p}__logradouro}"></div>
+        </div>
+        <div class="col-5 col-md-3">
+            <label class="form-label" th:for="${p + 'numero'}">Número</label>
+            <input type="number" class="form-control" th:field="*{__${p}__numero}" th:errorclass="is-invalid"
+                   placeholder="120" min="1">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__numero')}" th:errors="*{__${p}__numero}"></div>
+        </div>
+        <div class="col-7 col-md-9">
+            <label class="form-label" th:for="${p + 'complemento'}">Complemento</label>
+            <input type="text" class="form-control" th:field="*{__${p}__complemento}" th:errorclass="is-invalid"
+                   placeholder="Apto, bloco, sala..." maxlength="80">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__complemento')}" th:errors="*{__${p}__complemento}"></div>
+        </div>
+        <div class="col-12 col-md-6">
+            <label class="form-label" th:for="${p + 'cidade'}">Cidade</label>
+            <input type="text" class="form-control" th:field="*{__${p}__cidade}" th:errorclass="is-invalid"
+                   placeholder="São Paulo" maxlength="80">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__cidade')}" th:errors="*{__${p}__cidade}"></div>
+        </div>
+        <div class="col-4 col-md-2">
+            <label class="form-label" th:for="${p + 'uf'}">UF</label>
+            <select class="form-select" th:field="*{__${p}__uf}" th:errorclass="is-invalid"
+                    th:attr="data-uf=${p + 'estado'}">
+                <option value="">—</option>
+                <option th:each="u : ${@ufs.todas}" th:value="${u.key}" th:text="${u.key}"
+                        th:attr="data-estado=${u.value}">SP</option>
+            </select>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('__${p}__uf')}" th:errors="*{__${p}__uf}"></div>
+        </div>
+        <div class="col-8 col-md-4">
+            <label class="form-label" th:for="${p + 'estado'}">Estado</label>
+            <input type="text" class="form-control" th:field="*{__${p}__estado}" readonly tabindex="-1"
+                   placeholder="Preenchido pela UF">
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${usuarioForm.id == null ? 'Novo usuário' : 'Editar usuário'})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar('usuarios')}"></aside>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/layout :: mobilebar}"></div>
+
+        <div class="page-head">
+            <div>
+                <div class="crumb"><a th:href="@{/usuarios}">Usuários</a> / <span
+                        th:text="${usuarioForm.id == null} ? 'Novo usuário' : 'Editar usuário'">Novo usuário</span></div>
+                <h1 th:text="${usuarioForm.id == null} ? 'Novo usuário' : 'Editar usuário'">Novo usuário</h1>
+                <div class="sub">A senha é armazenada com hash BCrypt, nunca em texto puro.</div>
+            </div>
+        </div>
+
+        <form class="form-card" th:action="@{/usuarios/salvar}" th:object="${usuarioForm}" method="post" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <h2>Dados de acesso</h2>
+
+            <div class="flash flash-erro" th:if="${#fields.hasGlobalErrors()}" role="alert">
+                <i class="bi bi-exclamation-circle"></i>
+                <div><div th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</div></div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="usuario">Usuário (login)</label>
+                    <input type="text" class="form-control" th:field="*{usuario}" th:errorclass="is-invalid"
+                           placeholder="Ex.: juliana" maxlength="50" autocomplete="off">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('usuario')}" th:errors="*{usuario}"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="tipoAcessoId">Tipo de acesso</label>
+                    <select class="form-select" th:field="*{tipoAcessoId}" th:errorclass="is-invalid">
+                        <option value="">Selecione</option>
+                        <option th:each="t : ${tipos}" th:value="${t.id}" th:text="${t.descricao}">Profissional</option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('tipoAcessoId')}" th:errors="*{tipoAcessoId}"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="senha">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha"
+                           th:classappend="${#fields.hasErrors('senha')} ? 'is-invalid'"
+                           th:placeholder="${usuarioForm.id == null} ? 'Mínimo de 6 caracteres' : 'Deixe em branco para manter a atual'"
+                           autocomplete="new-password">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a class="btn btn-ap-light" th:href="@{/usuarios}">Cancelar</a>
+                <button type="submit" class="btn btn-ap">Salvar usuário</button>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
